@@ -3,491 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pure-Frontend ToDo App</title>
+    <title>ToDo App with Dark Mode</title>
     <style>
-        /* Basic resets and global styling */
+        /* General styles (light mode by default) */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f4; /* Light mode default background */
-            color: #333; /* Light mode default text color */
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition for dark/light mode */
-            display: flex;
-            justify-content: center;
-            min-height: 100vh; /* Full viewport height */
-            box-sizing: border-box;
+            background-color: #f4f4f4; /* Light background */
+            color: #333; /* Light text */
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Dark mode specific styles */
-        body.dark-mode {
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-        }
-
-        /* Main container for the app */
         .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             max-width: 600px;
-            width: 100%;
-            margin-top: 20px;
-            box-sizing: border-box;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
 
-        /* Dark mode container styling */
-        body.dark-mode .container {
-            background-color: #3a3a3a;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Header styling */
         h1 {
             text-align: center;
             color: #333;
             margin-bottom: 25px;
-            font-size: 2.2rem;
         }
 
-        /* Dark mode header styling */
-        body.dark-mode h1 {
-            color: #e0e0e0;
+        .theme-toggle-container {
+            text-align: right;
+            margin-bottom: 20px;
         }
 
-        /* Dark mode toggle button */
-        #darkModeToggle {
-            display: block;
-            margin: 0 auto 25px auto;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            background-color: #6c757d; /* Grey button */
-            color: white;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
-            outline: none;
-        }
-
-        #darkModeToggle:hover {
-            background-color: #5a6268;
-        }
-
-        /* Input area for new tasks */
-        .task-input {
-            display: flex;
-            gap: 10px; /* Space between input and button */
-            margin-bottom: 25px;
-        }
-
-        #newTaskInput {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        #newTaskInput:focus {
-            border-color: #007bff;
-        }
-
-        body.dark-mode #newTaskInput {
-            background-color: #4a4a4a;
-            color: #e0e0e0;
-            border-color: #666;
-        }
-
-        body.dark-mode #newTaskInput:focus {
-            border-color: #6daffb;
-        }
-
-        #addTaskButton {
-            padding: 12px 20px;
-            background-color: #007bff; /* Blue button */
+        .theme-toggle-button {
+            background-color: #007bff;
             color: white;
             border: none;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.2s;
-            outline: none;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
         }
 
-        #addTaskButton:hover {
+        .theme-toggle-button:hover {
             background-color: #0056b3;
         }
 
-        /* Task list styling */
-        #taskList {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .todo-input-group {
+            display: flex;
+            margin-bottom: 20px;
         }
 
-        /* Individual task item styling */
-        .task-item {
+        .todo-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        .add-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: #218838;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .todo-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
-        /* Dark mode task item border */
-        body.dark-mode .task-item {
-            border-bottom: 1px solid #555;
-        }
-
-        .task-item:last-child {
-            border-bottom: none; /* No border for the last item */
-        }
-
-        /* Completed task text styling */
-        .task-item.completed span {
+        .todo-item.completed {
             text-decoration: line-through;
             color: #888;
         }
 
-        /* Dark mode completed task text styling */
-        body.dark-mode .task-item.completed span {
-            color: #aaa;
-        }
-
-        /* Task text span */
-        .task-item span {
+        .todo-item span {
             flex-grow: 1;
-            margin-right: 15px;
-            word-break: break-word; /* Prevents long words from overflowing */
-            font-size: 1.05rem;
-        }
-        
-        /* Action buttons container */
-        .task-item .actions {
-            display: flex;
-            gap: 5px; /* Space between action buttons */
+            cursor: pointer;
         }
 
-        /* Common button styles within task items */
-        .task-item .actions button {
+        .todo-item-buttons button {
+            background-color: #dc3545;
+            color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: background-color 0.2s, opacity 0.2s;
-            outline: none;
-            white-space: nowrap; /* Prevent button text from wrapping */
+            margin-left: 8px;
+            transition: background-color 0.3s;
         }
 
-        /* Complete/Uncomplete button */
-        .task-item .actions button.complete {
-            background-color: #28a745; /* Green */
-            color: white;
-        }
-
-        .task-item .actions button.complete:hover {
-            background-color: #218838;
-        }
-
-        .task-item .actions button.uncomplete {
-            background-color: #6c757d; /* Grey */
-            color: white;
-        }
-
-        .task-item .actions button.uncomplete:hover {
-            background-color: #5a6268;
-        }
-
-        /* Edit button */
-        .task-item .actions button.edit {
-            background-color: #ffc107; /* Yellow/Orange */
+        .todo-item-buttons button.complete {
+            background-color: #ffc107;
             color: #333;
         }
 
-        .task-item .actions button.edit:hover {
+        .todo-item-buttons button.delete:hover {
+            background-color: #c82333;
+        }
+        .todo-item-buttons button.complete:hover {
             background-color: #e0a800;
         }
 
-        /* Delete button */
-        .task-item .actions button.delete {
-            background-color: #dc3545; /* Red */
-            color: white;
+        /* Dark mode styles */
+        body[data-theme="dark"] {
+            background-color: #2c2c2c; /* Dark background */
+            color: #e0e0e0; /* Dark text */
         }
 
-        .task-item .actions button.delete:hover {
-            background-color: #c82333;
+        body[data-theme="dark"] .container {
+            background-color: #3c3c3c;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Styling for the input field when editing a task */
-        .task-item input[type="text"] {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 5px;
-            font-size: 1rem;
-            outline: none;
+        body[data-theme="dark"] h1 {
+            color: #f0f0f0;
         }
 
-        /* Dark mode styling for edit input */
-        body.dark-mode .task-item input[type="text"] {
-            background-color: #555;
+        body[data-theme="dark"] .todo-input {
+            background-color: #4a4a4a;
+            border-color: #555;
             color: #e0e0e0;
-            border-color: #777;
         }
 
-        /* Save button in edit mode */
-        .task-item .actions button.save {
-            background-color: #007bff; /* Blue */
-            color: white;
+        body[data-theme="dark"] .todo-input::placeholder {
+            color: #a0a0a0;
         }
 
-        .task-item .actions button.save:hover {
-            background-color: #0056b3;
+        body[data-theme="dark"] .add-button {
+            background-color: #218838;
+        }
+        body[data-theme="dark"] .add-button:hover {
+            background-color: #1e7e34;
         }
 
-        /* Cancel button in edit mode */
-        .task-item .actions button.cancel {
-            background-color: #6c757d; /* Grey */
-            color: white;
+        body[data-theme="dark"] .todo-item {
+            background-color: #4a4a4a;
+            border-color: #555;
         }
 
-        .task-item .actions button.cancel:hover {
-            background-color: #5a6268;
+        body[data-theme="dark"] .todo-item.completed {
+            color: #999;
+        }
+
+        body[data-theme="dark"] .todo-item-buttons button.complete {
+            background-color: #e0a800;
+            color: #333;
+        }
+        body[data-theme="dark"] .todo-item-buttons button.complete:hover {
+            background-color: #cc9900;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Pure-Frontend ToDo App</h1>
-        <button id="darkModeToggle">Toggle Dark Mode</button>
-
-        <div class="task-input">
-            <input type="text" id="newTaskInput" placeholder="Add a new task...">
-            <button id="addTaskButton">Add Task</button>
+        <div class="theme-toggle-container">
+            <button id="theme-toggle" class="theme-toggle-button">Toggle Dark Mode</button>
         </div>
-
-        <ul id="taskList">
-            <!-- Tasks will be dynamically rendered here by JavaScript -->
+        <h1>ToDo List</h1>
+        <div class="todo-input-group">
+            <input type="text" id="new-todo-input" class="todo-input" placeholder="Add a new task...">
+            <button id="add-todo-button" class="add-button">Add Task</button>
+        </div>
+        <ul id="todo-list" class="todo-list">
+            <!-- ToDo items will be added here by JavaScript -->
         </ul>
     </div>
 
     <script>
-        // Array to store task objects. Each task has an id, text, and completed status.
-        let tasks = [];
-
-        // --- DOM Element References --- 
-        const newTaskInput = document.getElementById('newTaskInput');
-        const addTaskButton = document.getElementById('addTaskButton');
-        const taskList = document.getElementById('taskList');
-        const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.body;
+        const themeToggleButton = document.getElementById('theme-toggle');
+        const newTodoInput = document.getElementById('new-todo-input');
+        const addTodoButton = document.getElementById('add-todo-button');
+        const todoList = document.getElementById('todo-list');
 
-        // --- LocalStorage Functions --- 
-        // Loads tasks from localStorage when the app starts
-        function loadTasks() {
-            const storedTasks = localStorage.getItem('tasks');
-            if (storedTasks) {
-                tasks = JSON.parse(storedTasks); // Parse JSON string back into an array
-            } else {
-                tasks = []; // Initialize as empty array if no tasks are stored
-            }
+        // --- Dark Mode Logic ---
+        function applyTheme(theme) {
+            body.setAttribute('data-theme', theme);
+            themeToggleButton.textContent = theme === 'dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode';
         }
 
-        // Saves the current tasks array to localStorage
-        function saveTasks() {
-            localStorage.setItem('tasks', JSON.stringify(tasks)); // Convert array to JSON string for storage
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
         }
 
-        // --- UI Rendering --- 
-        // Renders all tasks from the 'tasks' array to the UI
-        function renderTasks() {
-            taskList.innerHTML = ''; // Clear the current list to re-render
-
-            // Sort tasks to show incomplete first, then completed, both by creation date (ID) descending (newest first)
-            const sortedTasks = [...tasks].sort((a, b) => {
-                if (a.completed === b.completed) {
-                    return b.id - a.id; // Newest first for tasks with same completion status
-                }
-                return a.completed ? 1 : -1; // Incomplete tasks first (false=0, true=1; so false comes before true)
-            });
-
-            sortedTasks.forEach(task => {
-                const li = document.createElement('li');
-                // Add 'task-item' class and 'completed' class if task is completed
-                li.className = `task-item ${task.completed ? 'completed' : ''}`;
-                li.dataset.id = task.id; // Store task ID on the list item for easy access
-
-                const taskTextSpan = document.createElement('span');
-                taskTextSpan.textContent = task.text;
-                li.appendChild(taskTextSpan);
-
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'actions';
-
-                // Complete/Uncomplete Button
-                const completeButton = document.createElement('button');
-                completeButton.textContent = task.completed ? 'Uncomplete' : 'Complete';
-                // Set class for different styling based on completion status
-                completeButton.className = task.completed ? 'uncomplete' : 'complete'; 
-                completeButton.addEventListener('click', () => toggleCompleteTask(task.id));
-                actionsDiv.appendChild(completeButton);
-
-                // Edit Button
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.className = 'edit';
-                editButton.addEventListener('click', () => editTask(task.id, li, taskTextSpan));
-                actionsDiv.appendChild(editButton);
-
-                // Delete Button
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.className = 'delete';
-                deleteButton.addEventListener('click', () => deleteTask(task.id));
-                actionsDiv.appendChild(deleteButton);
-
-                li.appendChild(actionsDiv);
-                taskList.appendChild(li);
-            });
-        }
-
-        // --- Task CRUD Operations --- 
-        // Adds a new task to the list
-        function addTask() {
-            const text = newTaskInput.value.trim();
-            if (text === '') {
-                alert('Task description cannot be empty!'); // User feedback for empty input
-                return;
-            }
-
-            const newTask = {
-                id: Date.now(), // Unique ID using timestamp (milliseconds since epoch)
-                text: text,
-                completed: false
-            };
-            tasks.unshift(newTask); // Add new task to the beginning of the array
-            saveTasks(); // Persist tasks to localStorage
-            renderTasks(); // Update the UI
-            newTaskInput.value = ''; // Clear the input field
-        }
-
-        // Toggles the 'completed' status of a task
-        function toggleCompleteTask(id) {
-            tasks = tasks.map(task =>
-                task.id === id ? { ...task, completed: !task.completed } : task
-            );
-            saveTasks();
-            renderTasks();
-        }
-
-        // Deletes a task from the list
-        function deleteTask(id) {
-            // Confirmation dialog before deleting
-            if (confirm('Are you sure you want to delete this task?')) {
-                tasks = tasks.filter(task => task.id !== id);
-                saveTasks();
-                renderTasks();
-            }
-        }
-
-        // Enables editing for a task item
-        function editTask(id, listItem, currentSpan) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return; // Task not found
-
-            // Create an input field pre-filled with the current task text
-            const editInput = document.createElement('input');
-            editInput.type = 'text';
-            editInput.value = task.text;
-            editInput.classList.add('edit-input');
-
-            // Create a save button for the edited task
-            const saveButton = document.createElement('button');
-            saveButton.textContent = 'Save';
-            saveButton.className = 'save';
-            saveButton.addEventListener('click', () => {
-                const newText = editInput.value.trim();
-                if (newText !== '') { // Ensure new text is not empty
-                    tasks = tasks.map(t =>
-                        t.id === id ? { ...t, text: newText } : t
-                    );
-                    saveTasks();
-                } else {
-                    alert('Task description cannot be empty!');
-                }
-                renderTasks(); // Re-render the list to show updated task or revert if cancelled/empty
-            });
-
-            // Create a cancel button for the edit operation
-            const cancelButton = document.createElement('button');
-            cancelButton.textContent = 'Cancel';
-            cancelButton.className = 'cancel';
-            cancelButton.addEventListener('click', () => {
-                renderTasks(); // Re-render to revert the task item to its original display
-            });
-
-            // Temporarily replace the task text and action buttons with the edit input and save/cancel buttons
-            listItem.innerHTML = ''; // Clear existing content of the li
-            listItem.appendChild(editInput);
-            const editActionsDiv = document.createElement('div');
-            editActionsDiv.className = 'actions'; // Use the actions class for styling
-            editActionsDiv.appendChild(saveButton);
-            editActionsDiv.appendChild(cancelButton);
-            listItem.appendChild(editActionsDiv);
-
-            editInput.focus(); // Automatically focus on the input field
-            // Allow saving by pressing Enter key in the edit input
-            editInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    saveButton.click(); 
-                }
-            });
-        }
-
-        // --- Dark Mode Functionality --- 
-        // Loads dark mode preference from localStorage on app load
-        function loadDarkModePreference() {
-            // Check if 'darkMode' item exists and is 'true'
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) {
-                body.classList.add('dark-mode'); // Apply dark mode class to body
-            }
-        }
-
-        // Toggles dark mode on/off
-        function toggleDarkMode() {
-            body.classList.toggle('dark-mode'); // Add or remove 'dark-mode' class
-            const isDarkMode = body.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isDarkMode); // Persist preference to localStorage
-        }
-
-        // --- Event Listeners --- 
-        // Event listener for adding a task when the button is clicked
-        addTaskButton.addEventListener('click', addTask);
-
-        // Event listener for adding a task when 'Enter' key is pressed in the input field
-        newTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                addTask();
-            }
-        });
-
-        // Event listener for the dark mode toggle button
-        darkModeToggle.addEventListener('click', toggleDarkMode);
-
-        // --- Initialization --- 
-        // Ensures DOM is fully loaded before running initial setup
+        // Initialize theme on page load
         document.addEventListener('DOMContentLoaded', () => {
-            loadDarkModePreference(); // Load dark mode setting first
-            loadTasks(); // Load existing tasks
-            renderTasks(); // Display tasks on the UI
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                // Default to light if no theme is saved
+                applyTheme('light');
+            }
         });
+
+        themeToggleButton.addEventListener('click', toggleTheme);
+
+        // --- ToDo App Logic ---
+        let todos = JSON.parse(localStorage.getItem('todos')) || [];
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = ''; // Clear existing list
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <span data-index="${index}">${todo.text}</span>
+                    <div class="todo-item-buttons">
+                        <button class="complete" data-index="${index}">${todo.completed ? 'Uncomplete' : 'Complete'}</button>
+                        <button class="delete" data-index="${index}">Delete</button>
+                    </div>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
+        function addTodo() {
+            const text = newTodoInput.value.trim();
+            if (text !== '') {
+                todos.push({ text: text, completed: false });
+                newTodoInput.value = '';
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function toggleTodoCompletion(index) {
+            todos[index].completed = !todos[index].completed;
+            saveTodos();
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            saveTodos();
+            renderTodos();
+        }
+
+        addTodoButton.addEventListener('click', addTodo);
+
+        newTodoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        todoList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('complete')) {
+                const index = parseInt(e.target.dataset.index);
+                toggleTodoCompletion(index);
+            } else if (e.target.classList.contains('delete')) {
+                const index = parseInt(e.target.dataset.index);
+                deleteTodo(index);
+            } else if (e.target.tagName === 'SPAN' && e.target.closest('.todo-item')) {
+                // Clicking on the text also toggles completion
+                const index = parseInt(e.target.dataset.index);
+                toggleTodoCompletion(index);
+            }
+        });
+
+        // Initial render of todos
+        renderTodos();
     </script>
 </body>
 </html>

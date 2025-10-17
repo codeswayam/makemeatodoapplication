@@ -1,3 +1,0 @@
-prior prompt  "Generate a single-file `index.html` for a pure-frontend ToDo app. It must be deployable on GitHub Pages, using only HTML, CSS, and JavaScript, without any build tools, backend, or server-side logic. Implement full CRUD (create, read, update, delete) operations for tasks, persisting data in `localStorage`. Include a toggleable dark mode feature. The UI should have an input field for new tasks, a list to display them with edit, delete, and mark-as-complete actions. Use minimal dependencies and add brief inline comments. Ensure all resources are self-contained or correctly referenced within the HTML file."
- task brief : make a toda app with full crud operation
- task checks : ['it should have dark mode']
